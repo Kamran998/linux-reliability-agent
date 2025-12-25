@@ -11,6 +11,7 @@ from checks.disk_growth_trend import check_disk_growth_trend
 from engine.scoring import calculate_reliability
 from checks.service_restarts import check_service_restarts
 from engine.incident import correlate_incident
+from engine.health import write_health_snapshot
 CHECKS = [
     check_disk_pressure,
     check_memory_pressure,
@@ -41,6 +42,13 @@ def run(interval: int) -> None:
                 alert["mode"] = mode
                 alert["incident_id"] = incident_id
                 emit_alert(**alert)
+            
+            write_health_snapshot(
+                score=score,
+                mode=mode,
+                active_alerts=len(all_alerts),
+            )
+
 
         except Exception:
             pass
