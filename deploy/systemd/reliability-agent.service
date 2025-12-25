@@ -1,0 +1,14 @@
+[Unit]
+Description=Linux Reliability Agent
+After=default.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 -m engine.run_reliability --interval 10
+WorkingDirectory=/home/kamran/linux-reliability-agent
+Restart=always
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=default.target
