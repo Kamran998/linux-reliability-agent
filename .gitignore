@@ -1,0 +1,10 @@
+# Runtime output
+logs/
+state/
+
+# Python
+__pycache__/
+*.pyc
+
+# Virtualenvs
+.venv/
