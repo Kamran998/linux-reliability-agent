@@ -8,7 +8,7 @@ from checks.disk_pressure import check_disk_pressure
 from checks.mem_pressure import check_memory_pressure
 from checks.load_pressure import check_load_pressure
 from checks.disk_growth_trend import check_disk_growth_trend
-
+from engine.scoring import calculate_reliability
 
 CHECKS = [
     check_disk_pressure,
@@ -25,18 +25,23 @@ def run(interval: int) -> None:
     while True:
         try:
             metrics = collect_sys_metrics()
+            all_alerts = []
 
             for check in CHECKS:
                 alerts = check(metrics)
-                for alert in alerts:
-                    emit_alert(**alert)
+                all_alerts.extend(alerts)
+
+            score, mode = calculate_reliability(all_alerts)
+
+            for alert in all_alerts:
+                alert["score"] = score
+                alert["mode"] = mode
+                emit_alert(**alert)
 
         except Exception:
-            # Never let the agent crash
             pass
 
         time.sleep(interval)
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Linux Reliability Agent")
