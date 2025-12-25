@@ -9,12 +9,13 @@ from checks.mem_pressure import check_memory_pressure
 from checks.load_pressure import check_load_pressure
 from checks.disk_growth_trend import check_disk_growth_trend
 from engine.scoring import calculate_reliability
-
+from checks.service_restarts import check_service_restarts
 CHECKS = [
     check_disk_pressure,
     check_memory_pressure,
     check_load_pressure,
     check_disk_growth_trend,
+    check_service_restarts,
 ]
 
 
