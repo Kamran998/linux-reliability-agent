@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Linux Reliability Agent Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background: #f5f5f5;
+        }
+        h1, h2 {
+            margin-bottom: 10px;
+        }
+        .card {
+            background: white;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+        }
+        .stable { color: green; }
+        .degraded { color: orange; }
+        .unstable { color: darkorange; }
+        .critical { color: red; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border-bottom: 1px solid #ddd;
+            padding: 6px;
+            text-align: left;
+            font-size: 14px;
+        }
+        th {
+            background: #eee;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Linux Reliability Agent</h1>
+
+<div class="card">
+    <h2>Current Health</h2>
+    {% if health %}
+        <p><strong>Host:</strong> {{ health.host }}</p>
+        <p><strong>Timestamp:</strong> {{ health.ts }}</p>
+        <p><strong>Score:</strong> {{ health.score }}</p>
+        <p><strong>Mode:</strong>
+            <span class="{{ health.mode }}">{{ health.mode }}</span>
+        </p>
+        <p><strong>Active Alerts:</strong> {{ health.active_alerts }}</p>
+        <p><strong>Active Incidents:</strong> {{ health.active_incidents }}</p>
+    {% else %}
+        <p>No health data available.</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2>Active Incidents</h2>
+    {% if incidents %}
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Root Cause</th>
+                <th>Created</th>
+                <th>Last Seen</th>
+                <th>Alert Count</th>
+            </tr>
+            {% for i in incidents %}
+            <tr>
+                <td>{{ i.id }}</td>
+                <td>{{ i.root_cause }}</td>
+                <td>{{ i.created }}</td>
+                <td>{{ i.last_seen }}</td>
+                <td>{{ i.alerts | length }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No incidents recorded.</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2>Recent Alerts</h2>
+    {% if alerts %}
+        <table>
+            <tr>
+                <th>Time</th>
+                <th>Severity</th>
+                <th>Source</th>
+                <th>Summary</th>
+                <th>Incident</th>
+            </tr>
+            {% for a in alerts %}
+            <tr>
+                <td>{{ a.ts }}</td>
+                <td class="{{ a.severity }}">{{ a.severity }}</td>
+                <td>{{ a.source }}</td>
+                <td>{{ a.summary }}</td>
+                <td>{{ a.incident_id }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No alerts recorded.</p>
+    {% endif %}
+</div>
+
+</body>
+</html>
