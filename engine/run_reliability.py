@@ -10,6 +10,7 @@ from checks.load_pressure import check_load_pressure
 from checks.disk_growth_trend import check_disk_growth_trend
 from engine.scoring import calculate_reliability
 from checks.service_restarts import check_service_restarts
+from engine.incident import correlate_incident
 CHECKS = [
     check_disk_pressure,
     check_memory_pressure,
@@ -33,10 +34,12 @@ def run(interval: int) -> None:
                 all_alerts.extend(alerts)
 
             score, mode = calculate_reliability(all_alerts)
+            incident_id = correlate_incident(all_alerts)
 
             for alert in all_alerts:
                 alert["score"] = score
                 alert["mode"] = mode
+                alert["incident_id"] = incident_id
                 emit_alert(**alert)
 
         except Exception:
